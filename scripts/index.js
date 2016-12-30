@@ -62,12 +62,10 @@ var replier3 = function (res, robot) {
 };
 
 var dispatcherTuling = function (res, robot) {
-
   var ret = res.match[1];
-
   if (ret) {
     return client.post({
-        url: "http://www.tuling123.com/openapi/api",
+        url: "http://www.tuling123.com/openapi/api?",
         json: true
       },
       {
@@ -75,11 +73,18 @@ var dispatcherTuling = function (res, robot) {
         info: ret
       }
       , function(data) {
-        var url = ""
-        if (data.hasOwnProperty("url")) {
-          url = data.url
+        if (data != null) {
+          console.log(data)
+          var url = ""
+          if (data.hasOwnProperty("url")) {
+            url = data.url
+          }
+          res.reply(data.text + url);
+        }else {
+          //TODO
+          console.log('图灵没有返回结果')
         }
-        res.reply(data.text + url);
+
       });
   }
 }
@@ -133,6 +138,7 @@ module.exports = function(robot) {
 
     //图灵兜底
     if ( !stWork && index == dispatchers.length - 1) {
+      console.log('兜底 ' + res.match[1].trim())
       dispatcherTuling.apply(this, [res, robot])
     }
   });
